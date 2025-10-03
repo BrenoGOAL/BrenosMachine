@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Bases</title>
+    <!-- estilo css -->
+    <style>
+
+
+/* Corpo da página */
+body {
+  font-family: Arial, sans-serif; /* Define a fonte do texto como Arial */
+  background: linear-gradient(135deg, #0d1117, #1f2937); /* Gradiente de fundo */
+  margin: 0; /* Remove margem padrão */
+  padding: 0; /* Remove padding padrão */
+  display: flex; /* Flexbox para centralização */
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center; /* Centraliza verticalmente */
+  height: 100vh; /* Altura igual à altura da tela */
+}
+
+/* Container */
+#container {
+  width: 90%; /* Largura 90% do container pai */
+  max-width: 400px; /* Largura máxima de 400px */
+  text-align: center; /* Centraliza o texto */
+  color: #f0f0f0; /* Cor do texto (branco claro) */
+  background-color: #1a1a1a; /* Fundo do container (cinza muito escuro) */
+  padding: 30px; /* Espaçamento interno */
+  border-radius: 12px; /* Cantos arredondados */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* Sombra ao redor */
+  animation: fadeIn 0.8s ease-in-out; /* Animação ao carregar */
+}
+
+/* Animação suave ao carregar */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); } /* Invisível e acima */
+  to   { opacity: 1; transform: translateY(0); } /* Visível na posição */
+}
+
+/* Títulos */
+h1 {
+  color: #4f9eff; /* Azul claro */
+  margin-bottom: 15px; /* Espaço abaixo */
+}
+h3 {
+  color: #f0f0f0; /* Branco claro */
+  margin-top: 20px; /* Espaço acima */
+}
+
+/* Input de texto */
+input[type="text"],
+select {
+  padding: 10px; /* Espaçamento interno */
+  font-size: 16px; /* Tamanho da fonte */
+  border-radius: 8px; /* Cantos arredondados */
+  border: 1px solid #333; /* Borda escura */
+  margin: 8px 0; /* Margem vertical */
+  width: 100%; /* Largura total */
+  background-color: #222; /* Fundo escuro */
+  color: #f0f0f0; /* Cor do texto */
+  transition: all 0.3s ease; /* Transição suave */
+}
+
+/* Foco no input */
+input[type="text"]:focus,
+select:focus {
+  border-color: #4f9eff; /* Borda azul no foco */
+  outline: none; /* Remove contorno padrão */
+  box-shadow: 0 0 8px #4f9eff; /* Sombra azul ao focar */
+}
+
+/* Checkboxes */
+#check label {
+  color: #f0f0f0; /* Cor do texto dos labels */
+  margin-left: 5px; /* Margem à esquerda */
+}
+
+/* Botão */
+button {
+  background-color: #4f9eff; /* Azul claro */
+  font-weight: bold; /* Texto em negrito */
+  color: #fff; /* Texto branco */
+  border: none; /* Sem borda */
+  padding: 12px; /* Espaçamento interno */
+  width: 100%; /* Largura total */
+  border-radius: 8px; /* Cantos arredondados */
+  cursor: pointer; /* Cursor pointer */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transição suave */
+}
+
+/* Hover do botão */
+button:hover {
+  background-color: #3577c0; /* Azul mais escuro */
+  transform: scale(1.05); /* Aumenta ligeiramente */
+}
+
+/* Área de saída */
+#output {
+  margin-top: 20px; /* Espaço acima */
+  padding: 15px; /* Espaçamento interno */
+  border-radius: 8px; /* Cantos arredondados */
+  background-color: #111; /* Fundo escuro */
+  border: 1px solid #333; /* Borda escura */
+  text-align: left; /* Texto alinhado à esquerda */
+  display: none; /* Inicialmente oculto */
+}
+       
+    </style>
+
+</head>
+
+<body>
+    <!-- contêiner principal -->
+    <div id="container">
+        <!-- título da página -->
+        <h1>Breno's Machine</h1>
+        <!-- entrada de valor -->
+        <input id="inputValue" type="text" placeholder="Digite o valor">
+        <!-- seleção da base -->
+        <select id="inputBase">
+            <option value="decimal">Decimal</option>
+            <option value="hexadecimal">Hexadecimal</option>
+            <option value="octal">Octal</option>
+            <option value="binario">Binário</option>
+        </select>
+        <br><br>
+        <!-- opções de conversão -->
+        <h3>Converter para:</h3>
+        <div id="check">
+        <input type="checkbox" id="convertDecimal"><label for="convertDecimal">Decimal</label> <br>
+        <input type="checkbox" id="convertHexadecimal"><label for="convertHexadecimal">Hexadecimal</label> <br>
+        <input type="checkbox" id="convertOctal"><label for="convertOctal">Octal</label> <br>
+        <input type="checkbox" id="convertBinario"><label for="convertBinario">Binário</label> <br>
+        </div><br><br>
+        <!-- botão de conversão -->
+        <button onclick="converter()">Converter</button>
+        <!-- saída de resultados -->
+        <div id="output"></div>
+    </div>
+    <!-- script javascript -->
+    <script>
+        // função para converter os valores
+        function converter() {
+            var inputValue = document.getElementById('inputValue').value; // obtém o valor de entrada
+            var inputBase = document.getElementById('inputBase').value; // obtém a base de entrada
+
+            // valida a entrada de acordo com a base selecionada
+            if (!validarEntrada(inputValue, inputBase)) {
+                alert('Por favor, insira um número válido para a base selecionada.');
+                return;
+            }
+
+            // converte o valor para decimal, com base na base de entrada selecionada
+            var decimalValue = parseInt(inputValue, inputBase === 'hexadecimal' ? 16 : inputBase === 'octal' ? 8 : inputBase === 'binario' ? 2 : 10);
+            var outputHTML = ''; // inicializa a variável para armazenar o html de saída
+
+            // verifica se cada opção de conversão está selecionada e adiciona o resultado ao html de saída
+            if (document.getElementById('convertDecimal').checked) {
+                output.style.display = 'block'; // exibe a saída
+                outputHTML += `<p>Decimal: ${decimalValue}</p>`; // adiciona o resultado ao html
+            }
+            if (document.getElementById('convertHexadecimal').checked) {
+                output.style.display = 'block'; // exibe a saída
+                outputHTML += `<p>Hexadecimal: ${decimalValue.toString(16).toUpperCase()}</p>`; // converte para hexadecimal e adiciona ao html
+            }
+            if (document.getElementById('convertOctal').checked) {
+                output.style.display = 'block'; // exibe a saída
+                outputHTML += `<p>Octal: ${decimalValue.toString(8)}</p>`; // converte para octal e adiciona ao html
+            }
+            if (document.getElementById('convertBinario').checked) {
+                output.style.display = 'block'; // exibe a saída
+                outputHTML += `<p>Binário: ${decimalValue.toString(2)}</p>`; // converte
+            }
+            document.getElementById('output').innerHTML = outputHTML; // atualiza o conteúdo da saída com o html gerado
+        }
+
+        // Função para validar a entrada de acordo com a base selecionada
+        function validarEntrada(inputValue, inputBase) {
+
+            var validChars = ''; // String para armazenar os caracteres válidos
+
+            // Determina os caracteres válidos com base na base selecionada
+            if (inputBase === 'decimal') {
+                validChars = '0123456789'; // Para base decimal, são válidos os dígitos de 0 a 9
+            } else if (inputBase === 'hexadecimal') {
+                validChars = '0123456789ABCDEFabcdef'; // Para base hexadecimal, são válidos os dígitos de 0 a 9 e as letras de A a F
+            } else if (inputBase === 'octal') {
+                validChars = '01234567'; // Para base octal, são válidos os dígitos de 0 a 7
+            } else if (inputBase === 'binario') {
+                validChars = '01'; // Para base binária, são válidos os dígitos 0 e 1
+            }
+
+            // Verifica se cada caractere da entrada está presente na lista de caracteres válidos
+            for (var i = 0; i < inputValue.length; i++) {
+                if (validChars.indexOf(inputValue[i]) === -1) { // Se o caractere não for encontrado na lista de caracteres válidos
+                    return false; // Retorna falso indicando que a entrada é inválida
+                }
+            }
+            return true; // Retorna verdadeiro indicando que a entrada é válida
+        }
+    </script>
+</body>
+
+</html>
